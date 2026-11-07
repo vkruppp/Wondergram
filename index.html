@@ -416,7 +416,7 @@ function renderEx(){
  document.querySelectorAll("#exTabs button").forEach(b=>b.onclick=()=>{EX=b.dataset.x;renderEx();loadEx()});
 }
 function loadEx(){
- const v=$("#exv"),h=HEROES.find(x=>x.id==EX),src=[`video/${EX}_${L}.mp4`,`video/${EX}_en.mp4`];let i=0;
+ const v=$("#exv"),h=HEROES.find(x=>x.id==EX),src=[...new Set([`video/${EX}_${L}.mp4`,`video/${EX}_en.mp4`,`video/${EX}_uk.mp4`])];let i=0;
  $("#exSoon").style.display="flex";v.poster=`img/${h.img}.jpg`;
  v.onloadeddata=()=>{$("#exSoon").style.display="none"};
  v.onerror=()=>{i++;if(i<src.length){v.src=src[i]}else{v.removeAttribute("src")}};
