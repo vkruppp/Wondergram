@@ -222,7 +222,7 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
  <div class="cards" id="cards"></div>
 </div>
 <div class="strip">
- <img src="img/santa_full.jpg" alt=""><img src="img/moroz_full.jpg" alt=""><img src="img/nicholas_full.jpg?v=2" alt=""><img src="img/fairy_full.jpg" alt=""><img src="img/wizard_full.jpg" alt=""><img src="img/elves.jpg" alt="">
+ <img src="img/nicholas_full.jpg?v=2" alt=""><img src="img/santa_full.jpg" alt=""><img src="img/moroz_full.jpg" alt=""><img src="img/fairy_full.jpg" alt=""><img src="img/wizard_full.jpg" alt=""><img src="img/elves.jpg" alt="">
 </div>
 </section>
 
@@ -341,9 +341,9 @@ let CUR="EUR", PRICES=PRICE_TABLE.EUR;
 function money(v){return CUR=="UAH"?`${v} грн`:`€${v}`}
 
 const HEROES=[
+ {id:"nicholas",img:"nicholas",occ:["nicholas"]},
  {id:"santa",img:"santa",occ:["christmas","newyear","birthday"]},
  {id:"moroz",img:"moroz",occ:["newyear","birthday"]},
- {id:"nicholas",img:"nicholas",occ:["nicholas"]},
  {id:"fairy",img:"fairy",occ:["tooth"]},
  {id:"wizard",img:"wizard",occ:["birthday"]},
  {id:"gnomes",img:"gnomes",occ:["birthday","newyear","christmas"]},
@@ -351,7 +351,9 @@ const HEROES=[
 const OCC=["newyear","christmas","nicholas","birthday","tooth","easter","other"];
 const codes=LANGS.map(l=>l[0]);
 const OFF=["zh","ar","he"]; /* temporarily hidden: Europe first */
-const ACT=LANGS.filter(l=>!OFF.includes(l[0])),acodes=ACT.map(l=>l[0]);
+const ORDER=["en","de","fr","es","nl","pl","cs","uk","ru"];
+const FLAG={en:"🇬🇧",de:"🇩🇪",fr:"🇫🇷",es:"🇪🇸",nl:"🇳🇱",pl:"🇵🇱",cs:"🇨🇿",uk:"🇺🇦",ru:"🇷🇺"};
+const ACT=ORDER.map(c=>LANGS.find(l=>l[0]==c)).filter(l=>l&&!OFF.includes(l[0])).map(([c,n])=>[c,(FLAG[c]?FLAG[c]+" ":"")+n]),acodes=ACT.map(l=>l[0]);
 let L="ru";
 const t=k=>(D[k]||[])[codes.indexOf(L)]||(D[k]||[])[2]||k;
 const $=s=>document.querySelector(s);
@@ -489,7 +491,7 @@ for(let i=0;i<90;i++)f.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()
 (function lp(){x.clearRect(0,0,W,H);x.fillStyle="rgba(255,255,255,.75)";f.forEach(p=>{p.y+=p.s;p.x+=Math.sin((p.y+p.d*40)/60)*.3;if(p.y>H){p.y=-4;p.x=Math.random()*W}x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});requestAnimationFrame(lp)})()})();
 
 /* examples: video/{hero}_{lang}.mp4, fallback to English */
-let EX="santa";
+let EX="nicholas";
 function renderEx(){
  $("#exTabs").innerHTML=HEROES.map(h=>`<button type="button" class="${h.id==EX?"on":""}" data-x="${h.id}">${t("h_"+h.id)}</button>`).join("");
  document.querySelectorAll("#exTabs button").forEach(b=>b.onclick=()=>{EX=b.dataset.x;renderEx();loadEx()});
