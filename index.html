@@ -504,14 +504,17 @@ let saved="";try{saved=localStorage.getItem("wg_lang")||""}catch(e){}
 const TZ_LANG={
  uk:["Europe/Kiev","Europe/Kyiv","Europe/Uzhgorod","Europe/Zaporozhye","Europe/Simferopol"],
  de:["Europe/Berlin","Europe/Vienna","Europe/Zurich","Europe/Busingen","Europe/Vaduz"],
- fr:["Europe/Paris","Europe/Monaco","Europe/Luxembourg","Europe/Brussels","America/Montreal","America/Toronto_fr"],
+ fr:["Europe/Paris","Europe/Monaco","Europe/Luxembourg","America/Montreal","America/Toronto_fr"],
  es:["Europe/Madrid","Atlantic/Canary","Africa/Ceuta","America/Mexico_City","America/Cancun","America/Monterrey","America/Tijuana","America/Bogota","America/Lima","America/Santiago","America/Buenos_Aires","America/Argentina/Buenos_Aires","America/Caracas","America/Montevideo","America/Asuncion","America/La_Paz","America/Guayaquil","America/Panama","America/Costa_Rica","America/Guatemala","America/El_Salvador","America/Tegucigalpa","America/Managua","America/Havana","America/Santo_Domingo","America/Puerto_Rico"],
  zh:["Asia/Shanghai","Asia/Chongqing","Asia/Harbin","Asia/Urumqi","Asia/Hong_Kong","Asia/Macau","Asia/Taipei"],
  he:["Asia/Jerusalem","Asia/Tel_Aviv"],
+ pl:["Europe/Warsaw"],
+ nl:["Europe/Amsterdam"],
  ar:["Asia/Dubai","Asia/Riyadh","Asia/Qatar","Asia/Kuwait","Asia/Bahrain","Asia/Muscat","Asia/Baghdad","Asia/Amman","Asia/Beirut","Asia/Damascus","Asia/Aden","Africa/Cairo","Africa/Casablanca","Africa/Algiers","Africa/Tunis","Africa/Tripoli","Africa/Khartoum"]
 };
 let tzLang="";try{const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";for(const k in TZ_LANG)if(TZ_LANG[k].includes(tz))tzLang=k}catch(e){}
 const nav=(navigator.language||"en").slice(0,2).toLowerCase();
+try{if(Intl.DateTimeFormat().resolvedOptions().timeZone=="Europe/Brussels")tzLang=(nav=="nl"?"nl":"fr")}catch(e){}
 const urlLang=new URLSearchParams(location.search).get("lang");
 applyLang((urlLang&&codes.includes(urlLang)&&urlLang)||saved||tzLang||(codes.includes(nav)?nav:"en"));
 go(0);
