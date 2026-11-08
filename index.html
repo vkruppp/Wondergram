@@ -125,6 +125,19 @@ textarea{min-height:90px;resize:vertical}
 .up .pv img{width:100%;height:100%;object-fit:cover}
 .up label.btn{cursor:pointer}
 .up input{display:none}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.slot{background:#fff;border:2px dashed #e2d5bb;border-radius:16px;padding:12px 10px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:.2s}
+.slot:hover{border-color:var(--gold)}
+.slot.ok{border-style:solid;border-color:var(--gold)}
+.slot.bad{border-color:#c4473a!important}
+.slot input{display:none}
+.slot .pv{width:100%;aspect-ratio:3/4;border-radius:10px;background:#f4ead6;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slot .pv img{width:100%;height:100%;object-fit:cover}
+.slot .pv svg{width:46%;opacity:.45}
+.slot b{font-size:13.5px;color:var(--ink);line-height:1.25}
+.slot i{font-style:normal;font-size:11.5px;color:var(--mut)}
+.tips{background:#f4ead6;border-radius:12px;padding:10px 14px;margin-top:10px;font-size:13px;color:var(--txt);line-height:1.6}
+@media(max-width:520px){.slots{gap:8px}.slot{padding:8px 6px}.slot b{font-size:12px}}
 .pk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .pk input{display:none}
 .pk label{cursor:pointer;background:#fff;border:2px solid #e8dcc4;border-radius:16px;padding:14px;text-align:center}
@@ -258,8 +271,13 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
      <label class="fl"><span data-i="f_gender"></span><select id="cgen"><option value="boy" data-i="g_boy"></option><option value="girl" data-i="g_girl"></option></select></label>
     </div>
    </div>
-   <div class="fl"><span data-i="f_photo"></span>
-    <div class="up"><div class="pv" id="pv"></div><label class="btn ghost sm"><input type="file" id="cphoto" accept="image/*" multiple><span data-i="f_upload"></span></label></div>
+   <div class="fl" id="photosBox"><span data-i="f_photo"></span>
+    <div class="slots">
+     <label class="slot" id="sl_face"><input type="file" accept="image/*" data-slot="face" id="cphoto"><div class="pv"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5" fill="#c9a35a"/><path d="M4 23c.8-5 4-7.5 8-7.5s7.2 2.5 8 7.5z" fill="#c9a35a"/></svg></div><b data-i="ph_face"></b><i data-i="ph_req"></i></label>
+     <label class="slot" id="sl_full"><input type="file" accept="image/*" data-slot="full"><div class="pv"><svg viewBox="0 0 24 24"><circle cx="12" cy="4" r="2.6" fill="#c9a35a"/><path d="M8.5 8h7l-1 7h-1.4l-.6 8h-1l-.6-8H9.5z" fill="#c9a35a"/></svg></div><b data-i="ph_full"></b><i data-i="ph_rec"></i></label>
+     <label class="slot" id="sl_extra"><input type="file" accept="image/*" data-slot="extra"><div class="pv"><svg viewBox="0 0 24 24"><path d="M11 4h2v16h-2zM4 11h16v2H4z" fill="#c9a35a"/></svg></div><b data-i="ph_extra"></b><i data-i="ph_opt"></i></label>
+    </div>
+    <div class="tips" data-i="ph_tips"></div>
     <small data-i="f_photo_h"></small></div>
    <label class="fl"><span data-i="f_ach"></span><textarea id="cach" data-ph="f_ach_ph" maxlength="600"></textarea></label>
    <label class="fl"><span data-i="f_hobby"></span><input type="text" id="chobby" data-ph="f_hobby_ph" maxlength="150"></label>
@@ -378,7 +396,8 @@ function total(){return PRICES[S.pk]+($("#exp").checked?PRICES.exp:0)}
 function updSum(){$("#sum").innerHTML=`<small>${t("total")}</small>${money(total())}`}
 
 /* photo */
-$("#cphoto").onchange=e=>{S.files=[...e.target.files];const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.photo=r.result;$("#pv").innerHTML=`<img src="${r.result}">`;$("#bookph").innerHTML=`<img src="${r.result}" style="width:100%;height:100%;object-fit:cover">`};r.readAsDataURL(f)};
+S.files={};
+document.querySelectorAll(".slot input").forEach(inp=>inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const k=inp.dataset.slot;S.files[k]=f;const sl=inp.closest(".slot");sl.classList.add("ok");sl.classList.remove("bad");const r=new FileReader();r.onload=()=>{sl.querySelector(".pv").innerHTML=`<img src="${r.result}">`;if(k=="face"){S.photo=r.result;$("#bookph").innerHTML=`<img src="${r.result}" style="width:100%;height:100%;object-fit:cover">`}};r.readAsDataURL(f)});
 $("#cname").oninput=e=>{$("#booknm").textContent=e.target.value||"Sophie"};
 
 /* steps */
@@ -396,7 +415,7 @@ function valid(n){
  let bad=[];
  if(n==0&&!S.hero)bad.push("#pickHero");
  if(n==1&&!S.occ)bad.push("#pickOcc");
- if(n==2){if(!$("#cname").value.trim())bad.push("#cname");if(!$("#cage").value)bad.push("#cage");if(!$("#cach").value.trim())bad.push("#cach")}
+ if(n==2){if(!$("#cname").value.trim())bad.push("#cname");if(!$("#cage").value)bad.push("#cage");if(!$("#cach").value.trim())bad.push("#cach");if(!S.files.face)bad.push("#sl_face")}
  if(n==3){if(!/^\S+@\S+\.\S+$/.test($("#email").value))bad.push("#email");if(!$("#consent").checked)bad.push("#consent")}
  document.querySelectorAll(".bad").forEach(e=>e.classList.remove("bad"));
  bad.forEach(s=>$(s).classList.add("bad"));
@@ -433,8 +452,9 @@ async function sendTelegram(o){
 <b>Язык сайта:</b> ${esc(o.siteLang)} · ${new Date(o.created).toLocaleString("ru-RU")}`;
  const r=await fetch(api+"/sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:TG_CHAT,text:txt,parse_mode:"HTML"})});
  if(!r.ok) throw new Error("tg "+r.status);
- for(const f of (S.files||[])){
-  const fd=new FormData();fd.append("chat_id",TG_CHAT);fd.append("document",f,f.name||"photo.jpg");fd.append("caption",`📷 ${o.id} · ${o.name}`);
+ const lab={face:"лицо крупно",full:"в полный рост",extra:"дополнительное"};
+ for(const k of ["face","full","extra"]){const f=(S.files||{})[k];if(!f)continue;
+  const fd=new FormData();fd.append("chat_id",TG_CHAT);fd.append("document",f,`${o.id}_${k}_`+(f.name||"photo.jpg"));fd.append("caption",`📷 ${o.id} · ${o.name} · ${lab[k]}`);
   await fetch(api+"/sendDocument",{method:"POST",body:fd});
  }
  return true;
