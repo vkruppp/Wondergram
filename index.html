@@ -222,7 +222,7 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
  <div class="cards" id="cards"></div>
 </div>
 <div class="strip">
- <img src="img/santa_full.jpg" alt=""><img src="img/moroz_full.jpg" alt=""><img src="img/nicholas_full.jpg" alt=""><img src="img/fairy_full.jpg" alt=""><img src="img/wizard_full.jpg" alt=""><img src="img/elves.jpg" alt="">
+ <img src="img/santa_full.jpg" alt=""><img src="img/moroz_full.jpg" alt=""><img src="img/nicholas_full.jpg?v=2" alt=""><img src="img/fairy_full.jpg" alt=""><img src="img/wizard_full.jpg" alt=""><img src="img/elves.jpg" alt="">
 </div>
 </section>
 
@@ -374,11 +374,11 @@ $("#langsel").onchange=e=>applyLang(e.target.value);
 const S={hero:"",occ:"",pk:"p2",step:0,photo:""};
 
 function renderCards(){
- $("#cards").innerHTML=HEROES.map(h=>`<div class="card rv in" data-h="${h.id}"><div class="im"><img src="img/${h.img}.jpg" alt="" loading="lazy"></div><div class="tx"><h3>${t("h_"+h.id)}</h3><p>${t("d_"+h.id)}</p><div class="tags">${h.occ.map(o=>`<i>${t("occ_"+o)}</i>`).join("")}</div><span class="btn sm">${t("choose")}</span></div></div>`).join("");
+ $("#cards").innerHTML=HEROES.map(h=>`<div class="card rv in" data-h="${h.id}"><div class="im"><img src="img/${h.img}.jpg?v=2" alt="" loading="lazy"></div><div class="tx"><h3>${t("h_"+h.id)}</h3><p>${t("d_"+h.id)}</p><div class="tags">${h.occ.map(o=>`<i>${t("occ_"+o)}</i>`).join("")}</div><span class="btn sm">${t("choose")}</span></div></div>`).join("");
  document.querySelectorAll(".card").forEach(c=>c.onclick=()=>{S.hero=c.dataset.h;S.occ=HEROES.find(h=>h.id==S.hero).occ[0];renderPick();renderOcc();go(1);$("#order").scrollIntoView()});
 }
 function renderPick(){
- $("#pickHero").innerHTML=HEROES.map(h=>`<input type="radio" name="hero" id="hr_${h.id}" value="${h.id}" ${S.hero==h.id?"checked":""}><label for="hr_${h.id}"><img src="img/${h.img}.jpg" alt=""><span>${t("h_"+h.id)}</span></label>`).join("");
+ $("#pickHero").innerHTML=HEROES.map(h=>`<input type="radio" name="hero" id="hr_${h.id}" value="${h.id}" ${S.hero==h.id?"checked":""}><label for="hr_${h.id}"><img src="img/${h.img}.jpg?v=2" alt=""><span>${t("h_"+h.id)}</span></label>`).join("");
  document.querySelectorAll("[name=hero]").forEach(r=>r.onchange=()=>{S.hero=r.value;S.occ=HEROES.find(h=>h.id==S.hero).occ[0];renderOcc();go(1)});
 }
 function renderOcc(){
@@ -489,7 +489,7 @@ function renderEx(){
 }
 function loadEx(){
  const v=$("#exv"),h=HEROES.find(x=>x.id==EX),src=[...new Set([`video/${EX}_${L}.mp4`,`video/${EX}_en.mp4`,`video/${EX}_uk.mp4`])];let i=0;
- $("#exSoon").style.display="none";v.poster=`img/${h.img}.jpg`;
+ $("#exSoon").style.display="none";v.poster=`img/${h.img}.jpg?v=2`;
  v.onerror=()=>{i++;if(i<src.length){v.src=src[i]}else{v.removeAttribute("src");$("#exSoon").style.display="flex"}};
  v.src=src[0];
 }
