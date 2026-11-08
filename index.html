@@ -306,6 +306,9 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
 <script src="i18n.js"></script>
 <script>
 /* ===== Settings: fill before launch ===== */
+/* Telegram: orders go to this chat */
+const TG_TOKEN = "9158745862:AAF5eke_eNCMISEHzeOynoZJcJFg0xteJ90";
+const TG_CHAT  = "";            // chat id from @userinfobot
 const PAY_URL = "";            // payment page link (WayForPay / Stripe Payment Link), order number is appended
 const BANK = {name:"—", iban:"—", bank:"—"};
 const PRICE_TABLE = {
@@ -375,7 +378,7 @@ function total(){return PRICES[S.pk]+($("#exp").checked?PRICES.exp:0)}
 function updSum(){$("#sum").innerHTML=`<small>${t("total")}</small>${money(total())}`}
 
 /* photo */
-$("#cphoto").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.photo=r.result;$("#pv").innerHTML=`<img src="${r.result}">`;$("#bookph").innerHTML=`<img src="${r.result}" style="width:100%;height:100%;object-fit:cover">`};r.readAsDataURL(f)};
+$("#cphoto").onchange=e=>{S.files=[...e.target.files];const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.photo=r.result;$("#pv").innerHTML=`<img src="${r.result}">`;$("#bookph").innerHTML=`<img src="${r.result}" style="width:100%;height:100%;object-fit:cover">`};r.readAsDataURL(f)};
 $("#cname").oninput=e=>{$("#booknm").textContent=e.target.value||"Sophie"};
 
 /* steps */
@@ -404,11 +407,46 @@ $("#nx").onclick=()=>{if(!valid(S.step))return;if(S.step<3)go(S.step+1);else fin
 $("#bk").onclick=()=>go(Math.max(0,S.step-1));
 document.querySelectorAll("#tabs div").forEach((d,i)=>d.onclick=()=>{if(i<S.step)go(i)});
 
-function finish(){
+const esc=s=>String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const ru=k=>(D[k]||[])[0]||k;
+async function sendTelegram(o){
+ if(!TG_TOKEN||!TG_CHAT) return true;
+ const api="https://api.telegram.org/bot"+TG_TOKEN;
+ const pk={p1:ru("p1_n"),p2:ru("p2_n"),p3:ru("p3_n")}[o.package];
+ const langName=(LANGS.find(x=>x[0]==o.videoLang)||[])[1]||o.videoLang;
+ const txt=`🎁 <b>Новый заказ ${o.id}</b>
+
+<b>Герой:</b> ${esc(ru("h_"+o.hero))}
+<b>Повод:</b> ${esc(ru("occ_"+o.occasion))}
+
+<b>Ребёнок:</b> ${esc(o.name)}, ${esc(o.age)} лет, ${o.gender=="girl"?"девочка":"мальчик"}
+<b>Достижения:</b> ${esc(o.achievements)}
+<b>Увлечение:</b> ${esc(o.hobby)||"—"}
+<b>Пожелание/совет:</b> ${esc(o.wish)||"—"}
+<b>Где подарок:</b> ${esc(o.gift)||"—"}
+
+<b>Пакет:</b> ${esc(pk)}${o.express?" + ⚡ экспресс 24 ч":""}
+<b>Сумма:</b> ${esc(money(o.total))}
+<b>Язык видео:</b> ${esc(langName)}
+<b>Оплата:</b> ${o.pay=="card"?"карта / Apple Pay / Google Pay":"по реквизитам"}
+<b>Email:</b> ${esc(o.email)}
+<b>Язык сайта:</b> ${esc(o.siteLang)} · ${new Date(o.created).toLocaleString("ru-RU")}`;
+ const r=await fetch(api+"/sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:TG_CHAT,text:txt,parse_mode:"HTML"})});
+ if(!r.ok) throw new Error("tg "+r.status);
+ for(const f of (S.files||[])){
+  const fd=new FormData();fd.append("chat_id",TG_CHAT);fd.append("document",f,f.name||"photo.jpg");fd.append("caption",`📷 ${o.id} · ${o.name}`);
+  await fetch(api+"/sendDocument",{method:"POST",body:fd});
+ }
+ return true;
+}
+async function finish(){
  const id="WG-"+Date.now().toString(36).toUpperCase().slice(-6);
  const pay=document.querySelector("[name=pay]:checked").value;
  const o={id,hero:S.hero,occasion:S.occ,name:$("#cname").value.trim(),age:$("#cage").value,gender:$("#cgen").value,achievements:$("#cach").value.trim(),hobby:$("#chobby").value.trim(),wish:$("#cwish").value.trim(),gift:$("#cgift").value.trim(),videoLang:$("#vlang").value,package:S.pk,express:$("#exp").checked,currency:CUR,email:$("#email").value,pay,total:total(),siteLang:L,created:new Date().toISOString()};
  try{localStorage.setItem("wg_order_"+id,JSON.stringify(o))}catch(e){}
+ const nx=$("#nx");nx.disabled=true;const nxt=nx.textContent;nx.textContent="…";
+ try{await sendTelegram(o)}catch(e){nx.disabled=false;nx.textContent=nxt;$("#msg").textContent=t("send_err");return}
+ nx.disabled=false;nx.textContent=nxt;
  let h=`<div style="font-size:44px">✦</div><h3>${t("done_t")}</h3><div>${t("order_no")}</div><div class="no">${id}</div><div class="sum" style="margin-bottom:14px">${money(o.total)}</div>`;
  if(pay=="card"){h+=`<p>${t("done_card")}</p><a class="btn" ${PAY_URL?`href="${PAY_URL}${encodeURIComponent(id)}" target="_blank"`:`href="#order"`}> ${t("pay_btn")}</a>`}
  else{h+=`<p>${t("done_bank")}</p><div class="bank">${BANK.name}<br>IBAN: <b>${BANK.iban}</b><br>${BANK.bank}<br>${t("order_no")}: <b>${id}</b></div>`}
