@@ -350,6 +350,8 @@ const HEROES=[
  {id:"bunny",img:"bunny",occ:["easter"]}];
 const OCC=["newyear","christmas","nicholas","birthday","tooth","easter","other"];
 const codes=LANGS.map(l=>l[0]);
+const OFF=["zh","ar","he"]; /* temporarily hidden: Europe first */
+const ACT=LANGS.filter(l=>!OFF.includes(l[0])),acodes=ACT.map(l=>l[0]);
 let L="ru";
 const t=k=>(D[k]||[])[codes.indexOf(L)]||(D[k]||[])[2]||k;
 const $=s=>document.querySelector(s);
@@ -368,8 +370,8 @@ function applyLang(l){
  if(!$("#vlang").dataset.touched)$("#vlang").value=L;
 }
 /* language select */
-$("#langsel").innerHTML=LANGS.map(([c,n])=>`<option value="${c}">${n}</option>`).join("");
-$("#vlang").innerHTML=LANGS.map(([c,n])=>`<option value="${c}">${n}</option>`).join("");
+$("#langsel").innerHTML=ACT.map(([c,n])=>`<option value="${c}">${n}</option>`).join("");
+$("#vlang").innerHTML=ACT.map(([c,n])=>`<option value="${c}">${n}</option>`).join("");
 $("#vlang").onchange=e=>e.target.dataset.touched=1;
 $("#langsel").onchange=e=>applyLang(e.target.value);
 
@@ -516,7 +518,8 @@ let tzLang="";try{const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";
 const nav=(navigator.language||"en").slice(0,2).toLowerCase();
 try{if(Intl.DateTimeFormat().resolvedOptions().timeZone=="Europe/Brussels")tzLang=(nav=="nl"?"nl":"fr")}catch(e){}
 const urlLang=new URLSearchParams(location.search).get("lang");
-applyLang((urlLang&&codes.includes(urlLang)&&urlLang)||saved||tzLang||(codes.includes(nav)?nav:"en"));
+const ok=x=>x&&acodes.includes(x)?x:"";
+applyLang(ok(urlLang)||ok(saved)||ok(tzLang)||ok(nav)||"en");
 go(0);
 </script>
 </body>
