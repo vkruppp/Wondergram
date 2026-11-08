@@ -430,9 +430,8 @@ function renderEx(){
 }
 function loadEx(){
  const v=$("#exv"),h=HEROES.find(x=>x.id==EX),src=[...new Set([`video/${EX}_${L}.mp4`,`video/${EX}_en.mp4`,`video/${EX}_uk.mp4`])];let i=0;
- $("#exSoon").style.display="flex";v.poster=`img/${h.img}.jpg`;
- v.onloadeddata=()=>{$("#exSoon").style.display="none"};
- v.onerror=()=>{i++;if(i<src.length){v.src=src[i]}else{v.removeAttribute("src")}};
+ $("#exSoon").style.display="none";v.poster=`img/${h.img}.jpg`;
+ v.onerror=()=>{i++;if(i<src.length){v.src=src[i]}else{v.removeAttribute("src");$("#exSoon").style.display="flex"}};
  v.src=src[0];
 }
 /* init */
