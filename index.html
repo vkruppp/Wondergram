@@ -178,11 +178,15 @@ footer .logo{justify-content:center;margin-bottom:10px}
 nav .links{margin-inline-start:auto}
 @media(max-width:860px){.langwrap{margin-inline-start:auto}}
 /* snow */
-.snow{position:absolute;inset:0;z-index:1;pointer-events:none}
+.snow{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.smoke{position:absolute;left:77.3vw;bottom:28.35vw;width:0;height:0;z-index:1;pointer-events:none;display:none}
+.smoke i{position:absolute;left:-1.3vw;bottom:-.6vw;width:2.6vw;height:2.6vw;border-radius:50%;background:radial-gradient(circle,rgba(225,230,240,.6),rgba(225,230,240,0) 70%);filter:blur(3px);opacity:0;animation:smk 7s linear infinite}
+.smoke i:nth-child(2){animation-delay:1.75s}.smoke i:nth-child(3){animation-delay:3.5s}.smoke i:nth-child(4){animation-delay:5.25s}
+@keyframes smk{0%{transform:translate(0,0) scale(.5);opacity:0}12%{opacity:.75}60%{opacity:.35}100%{transform:translate(3.5vw,-13vw) scale(3.4);opacity:0}}
 .rv{opacity:0;transform:translateY(24px);transition:.8s}.rv.in{opacity:1;transform:none}
 [dir=rtl] .pr .pl{left:auto;right:50%;transform:translateX(50%)}
 html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
-@media(min-width:861px) and (orientation:landscape) and (max-aspect-ratio:233/100){.hero{background:#010e1e}.hero img{top:auto!important;bottom:0;left:auto!important;right:0;width:120%!important;height:auto!important;object-fit:fill;animation:none}}
+@media(min-width:861px) and (orientation:landscape) and (max-aspect-ratio:233/100){.hero{background:#010e1e}.hero img{top:auto!important;bottom:0;left:auto!important;right:0;width:120%!important;height:auto!important;object-fit:fill;animation:none}.smoke{display:block}}
 @media(max-width:860px){.hero{min-height:auto;display:block}.hero img{height:auto!important;bottom:auto!important;object-fit:contain;animation:none}.hero .wrap{padding-top:86vw;padding-bottom:50px}.hero:after{background:linear-gradient(180deg,rgba(10,16,38,.35) 0%,transparent 15%,transparent 40%,rgba(10,16,38,.4) 60%,rgba(10,16,38,.6) 100%)!important}.hero{background:#0a1430}nav .links{display:none}.steps,.prices,.inside{grid-template-columns:1fr}.pr.pop{transform:none}.row{grid-template-columns:1fr}.pk{grid-template-columns:1fr}.form{padding:22px 18px;border-radius:22px}section{padding:70px 0}.strip img{height:200px}.tabs div{min-width:70px;font-size:12px}nav .btn.sm{display:none}}
 </style>
 </head>
@@ -196,6 +200,7 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
 
 <header class="hero" id="top">
  <picture><source media="(max-width:860px), (orientation:portrait)" srcset="img/hero_m.jpg?v=3"><img src="img/hero_d.jpg?v=1" alt=""></picture>
+ <div class="smoke"><i></i><i></i><i></i><i></i></div>
  <canvas class="snow" id="snow"></canvas>
  <div class="wrap">
   <div class="copy">
