@@ -384,6 +384,7 @@ function go(n){
  document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",+p.dataset.p==n));
  document.querySelectorAll("#tabs div").forEach((d,i)=>{d.className=i==n?"on":i<n?"ok":""});
  $("#bk").style.visibility=n==0?"hidden":"visible";
+ $("#sum").style.visibility=n==3?"visible":"hidden";
  $("#nx").textContent=t(n==3?"submit":"next");$("#nx").dataset.i=n==3?"submit":"next";
  $("#nav2").style.display=n==4?"none":"flex";
  $("#msg").textContent="";
