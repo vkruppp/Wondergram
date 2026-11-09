@@ -417,8 +417,8 @@ let CAT=null,GT="all";
 const OCC=["newyear","christmas","nicholas","kings","befana","birthday","tooth","easter","patrick","valentine","anniversary","other"];
 const codes=LANGS.map(l=>l[0]);
 const OFF=["zh","ar","he"]; /* temporarily hidden: Europe first */
-const ORDER=["en","de","fr","es","nl","pl","cs","uk","ru"];
-const FLAG={en:"🇬🇧",de:"🇩🇪",fr:"🇫🇷",es:"🇪🇸",nl:"🇳🇱",pl:"🇵🇱",cs:"🇨🇿",uk:"🇺🇦",ru:"🇷🇺"};
+const ORDER=["en","de","fr","es","it","nl","pl","cs","uk","ru"];
+const FLAG={en:"🇬🇧",de:"🇩🇪",fr:"🇫🇷",es:"🇪🇸",it:"🇮🇹",nl:"🇳🇱",pl:"🇵🇱",cs:"🇨🇿",uk:"🇺🇦",ru:"🇷🇺"};
 const ACT=ORDER.map(c=>LANGS.find(l=>l[0]==c)).filter(l=>l&&!OFF.includes(l[0])).map(([c,n])=>[c,(FLAG[c]?FLAG[c]+" ":"")+n]),acodes=ACT.map(l=>l[0]);
 let L="ru";
 const t=k=>(D[k]||[])[codes.indexOf(L)]||(D[k]||[])[2]||k;
@@ -601,14 +601,15 @@ function setSubs(v){
  tr.addEventListener("load",ap);setTimeout(ap,50);
  b.onclick=()=>{ccOn=!ccOn;try{localStorage.setItem("wg_cc",ccOn?"1":"0")}catch(e){}ap()};
 }
-const EXN={uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejka",nl:"Andries",cs:"Ondřejka"};
-const EXNOM={uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejek",nl:"Andries",cs:"Ondřejek"};
+const EXN={it:"Andrea",uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejka",nl:"Andries",cs:"Ondřejka"};
+const EXNOM={it:"Andrea",uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejek",nl:"Andries",cs:"Ondřejek"};
 /* init */
 let saved="";try{saved=localStorage.getItem("wg_lang")||""}catch(e){}
 /* language by country (time zone of the device), then browser language */
 const TZ_LANG={
  uk:["Europe/Kiev","Europe/Kyiv","Europe/Uzhgorod","Europe/Zaporozhye","Europe/Simferopol"],
  de:["Europe/Berlin","Europe/Vienna","Europe/Zurich","Europe/Busingen","Europe/Vaduz"],
+ it:["Europe/Rome","Europe/Vatican","Europe/San_Marino"],
  fr:["Europe/Paris","Europe/Monaco","Europe/Luxembourg","America/Montreal","America/Toronto_fr"],
  es:["Europe/Madrid","Atlantic/Canary","Africa/Ceuta","America/Mexico_City","America/Cancun","America/Monterrey","America/Tijuana","America/Bogota","America/Lima","America/Santiago","America/Buenos_Aires","America/Argentina/Buenos_Aires","America/Caracas","America/Montevideo","America/Asuncion","America/La_Paz","America/Guayaquil","America/Panama","America/Costa_Rica","America/Guatemala","America/El_Salvador","America/Tegucigalpa","America/Managua","America/Havana","America/Santo_Domingo","America/Puerto_Rico"],
  zh:["Asia/Shanghai","Asia/Chongqing","Asia/Harbin","Asia/Urumqi","Asia/Hong_Kong","Asia/Macau","Asia/Taipei"],
