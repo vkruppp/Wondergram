@@ -590,7 +590,7 @@ function rs(){W=c.width=c.offsetWidth||innerWidth;H=c.height=c.offsetHeight||inn
 
 /* examples: video/{hero}_{lang}.mp4, fallback to English */
 let EX="nicholas";
-const EXV=["nicholas","santa","kings"];
+const EXV=["nicholas","santa","kings","godmother"];
 const EXFALL={kings:"es"}; /* hero-specific fallback language */ /* heroes that already have example videos */
 function renderEx(){
  $("#exTabs").innerHTML=HEROES.filter(h=>EXV.includes(h.id)).map(h=>`<button type="button" class="${h.id==EX?"on":""}" data-x="${h.id}">${t("h_"+h.id)}</button>`).join("");
