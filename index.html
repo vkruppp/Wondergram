@@ -170,6 +170,10 @@ footer .logo{justify-content:center;margin-bottom:10px}
 .extabs button.on{background:var(--gold);color:#2b1d07;border-color:var(--gold)}
 .player{position:relative;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 24px 60px rgba(0,0,0,.45);aspect-ratio:16/9}
 .player video{width:100%;height:100%;display:block;object-fit:cover}
+.player .cc{position:absolute;top:12px;right:12px;z-index:2;display:none;align-items:center;gap:6px;background:rgba(14,22,48,.72);color:#fff;border:1px solid rgba(226,184,100,.55);border-radius:20px;padding:6px 12px;font:600 13px/1 inherit;cursor:pointer;backdrop-filter:blur(4px)}
+.player .cc b{border:1.5px solid currentColor;border-radius:4px;padding:1px 3px;font-size:11px}
+.player .cc.on{background:var(--gold2,#e2b864);color:#0e1630}
+.player video::cue{background:rgba(0,0,0,.62);color:#fff;font-size:clamp(14px,2.3vw,22px);line-height:1.35}
 .player .soon{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:28px;background:linear-gradient(180deg,transparent 50%,rgba(14,22,48,.85));pointer-events:none}
 .player .soon span{background:rgba(14,22,48,.8);color:var(--gold2);border:1px solid rgba(226,184,100,.5);border-radius:30px;padding:8px 18px;font-size:14px}
 .langwrap{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(226,184,100,.45);border-radius:22px;padding:4px 6px 4px 10px;color:var(--gold2);cursor:pointer}
@@ -235,7 +239,7 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
 <section class="dark" id="examples" style="padding-top:20px"><div class="wrap">
  <div class="sh rv"><h2 data-i="ex_t"></h2><p data-i="ex_p"></p></div>
  <div class="ex"><div class="extabs" id="exTabs"></div>
-  <div class="player"><video id="exv" controls playsinline preload="metadata"></video><div class="soon" id="exSoon"><span data-i="ex_soon"></span></div></div></div>
+  <div class="player"><video id="exv" controls playsinline preload="metadata"></video><button type="button" class="cc" id="ccBtn" aria-pressed="false"><b>CC</b><span data-i="cc"></span></button><div class="soon" id="exSoon"><span data-i="ex_soon"></span></div></div></div>
 </div></section>
 
 <section id="inside"><div class="wrap">
@@ -297,6 +301,7 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
   <div class="pane" data-p="3">
    <div class="fl"><div class="pk" id="pickPk"></div></div>
    <label class="ck"><input type="checkbox" id="exp"><span><span data-i="express"></span> (+<span data-price="exp"></span>)</span></label>
+   <label class="ck"><input type="checkbox" id="subs"><span data-i="f_subs"></span></label>
    <div class="row">
     <label class="fl"><span data-i="f_lang"></span><select id="vlang"></select></label>
     <label class="fl"><span data-i="f_email"></span><input type="email" id="email" placeholder="name@mail.com"></label>
@@ -464,6 +469,7 @@ async function sendTelegram(o){
 <b>Где подарок:</b> ${esc(o.gift)||"—"}
 
 <b>Пакет:</b> ${esc(pk)}${o.express?" + ⚡ экспресс 24 ч":""}
+<b>Субтитры:</b> ${o.subs?"✅ нужны":"—"}
 <b>Сумма:</b> ${esc(money(o.total))}
 <b>Язык видео:</b> ${esc(langName)}
 <b>Оплата:</b> ${o.pay=="card"?"карта / Apple Pay / Google Pay":"по реквизитам"}
@@ -482,7 +488,7 @@ async function sendTelegram(o){
 async function finish(){
  const id="WG-"+Date.now().toString(36).toUpperCase().slice(-6);
  const pay=document.querySelector("[name=pay]:checked").value;
- const o={id,hero:S.hero,occasion:S.occ,name:$("#cname").value.trim(),age:$("#cage").value,gender:$("#cgen").value,achievements:$("#cach").value.trim(),hobby:$("#chobby").value.trim(),wish:$("#cwish").value.trim(),gift:$("#cgift").value.trim(),videoLang:$("#vlang").value,package:S.pk,express:$("#exp").checked,currency:CUR,email:$("#email").value,pay,total:total(),siteLang:L,created:new Date().toISOString()};
+ const o={id,hero:S.hero,occasion:S.occ,name:$("#cname").value.trim(),age:$("#cage").value,gender:$("#cgen").value,achievements:$("#cach").value.trim(),hobby:$("#chobby").value.trim(),wish:$("#cwish").value.trim(),gift:$("#cgift").value.trim(),videoLang:$("#vlang").value,package:S.pk,express:$("#exp").checked,subs:$("#subs").checked,currency:CUR,email:$("#email").value,pay,total:total(),siteLang:L,created:new Date().toISOString()};
  try{localStorage.setItem("wg_order_"+id,JSON.stringify(o))}catch(e){}
  const nx=$("#nx");nx.disabled=true;const nxt=nx.textContent;nx.textContent="…";
  try{await sendTelegram(o)}catch(e){nx.disabled=false;nx.textContent=nxt;$("#msg").textContent=t("send_err");return}
@@ -513,7 +519,21 @@ function loadEx(){
  $("#exSoon").style.display="none";v.poster=`img/${h.img}.jpg?v=2`;
  v.onerror=()=>{i++;if(i<src.length){v.src=src[i]}else{v.removeAttribute("src");$("#exSoon").style.display="flex"}};
  v.onloadeddata=()=>{const m=(v.currentSrc||v.src).match(/_([a-z]{2})\.mp4/),vl=m?m[1]:L,el=document.querySelector('[data-i="ex_p"]');if(el)el.textContent=vl==L?t("ex_p"):t("ex_p").replace(EXN[L]||"",EXNOM[vl]||"")};
+ v.addEventListener("loadedmetadata",()=>setSubs(v),{once:true});
  v.src=src[0];
+}
+/* subtitles for examples: video/subs/{hero}_{lang}.vtt */
+const SUBS={nicholas:["uk","ru","en","pl","nl","fr","de","cs"]};
+let ccOn=false;try{ccOn=localStorage.getItem("wg_cc")=="1"}catch(e){}
+function setSubs(v){
+ [...v.querySelectorAll("track")].forEach(x=>x.remove());
+ const m=(v.currentSrc||v.src).match(/\/([a-z]+)_([a-z]{2})\.mp4/),b=$("#ccBtn");
+ if(!m||!(SUBS[m[1]]||[]).includes(m[2])){b.style.display="none";return}
+ const tr=document.createElement("track");tr.kind="subtitles";tr.srclang=m[2];tr.label=(LANGS.find(x=>x[0]==m[2])||[,m[2]])[1];tr.src=`video/subs/${m[1]}_${m[2]}.vtt?v=1`;
+ v.appendChild(tr);b.style.display="inline-flex";
+ const ap=()=>{for(const x of v.textTracks)x.mode=ccOn?"showing":"hidden";b.classList.toggle("on",ccOn);b.setAttribute("aria-pressed",ccOn)};
+ tr.addEventListener("load",ap);setTimeout(ap,50);
+ b.onclick=()=>{ccOn=!ccOn;try{localStorage.setItem("wg_cc",ccOn?"1":"0")}catch(e){}ap()};
 }
 const EXN={uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejka",nl:"Andries",cs:"Ondřejka"};
 const EXNOM={uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejek",nl:"Andries",cs:"Ondřejek"};
