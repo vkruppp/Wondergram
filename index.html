@@ -575,16 +575,17 @@ function rs(){W=c.width=c.offsetWidth||innerWidth;H=c.height=c.offsetHeight||inn
 
 /* examples: video/{hero}_{lang}.mp4, fallback to English */
 let EX="nicholas";
-const EXV=["nicholas","santa"]; /* heroes that already have example videos */
+const EXV=["nicholas","santa","kings"];
+const EXFALL={kings:"es"}; /* hero-specific fallback language */ /* heroes that already have example videos */
 function renderEx(){
  $("#exTabs").innerHTML=HEROES.filter(h=>EXV.includes(h.id)).map(h=>`<button type="button" class="${h.id==EX?"on":""}" data-x="${h.id}">${t("h_"+h.id)}</button>`).join("");
  document.querySelectorAll("#exTabs button").forEach(b=>b.onclick=()=>{EX=b.dataset.x;renderEx();loadEx()});
 }
 function loadEx(){
- const v=$("#exv"),h=HEROES.find(x=>x.id==EX),src=[...new Set([`video/${EX}_${L}.mp4`,`video/${EX}_en.mp4`,`video/${EX}_uk.mp4`])];let i=0;
+ const v=$("#exv"),h=HEROES.find(x=>x.id==EX),src=[...new Set([`video/${EX}_${L}.mp4`,...(EXFALL[EX]?[`video/${EX}_${EXFALL[EX]}.mp4`]:[]),`video/${EX}_en.mp4`,`video/${EX}_uk.mp4`])];let i=0;
  $("#exSoon").style.display="none";v.poster=`img/${h.img}.jpg?v=2`;
  v.onerror=()=>{i++;if(i<src.length){v.src=src[i]}else{v.removeAttribute("src");$("#exSoon").style.display="flex"}};
- v.onloadeddata=()=>{const m=(v.currentSrc||v.src).match(/_([a-z]{2})\.mp4/),vl=m?m[1]:L,el=document.querySelector('[data-i="ex_p"]');if(el)el.textContent=vl==L?t("ex_p"):t("ex_p").replace(EXN[L]||"",EXNOM[vl]||"")};
+ v.onloadeddata=()=>{const m=(v.currentSrc||v.src).match(/_([a-z]{2})\.mp4/),vl=m?m[1]:L,el=document.querySelector('[data-i="ex_p"]');if(!el)return;if(D["ex_p_"+EX]){el.textContent=t("ex_p_"+EX);return}el.textContent=vl==L?t("ex_p"):t("ex_p").replace(EXN[L]||"",EXNOM[vl]||"")};
  v.addEventListener("loadedmetadata",()=>setSubs(v),{once:true});
  v.src=src[0];
 }
