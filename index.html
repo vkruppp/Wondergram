@@ -60,6 +60,31 @@ section{padding:100px 0}
 .step h3{font-size:21px;margin-bottom:8px;color:var(--ink)}
 .step p{color:var(--mut);font-size:15px}
 /* heroes */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cat{position:relative;aspect-ratio:2/3;border-radius:24px;overflow:hidden;cursor:pointer;border:1px solid rgba(226,184,100,.25);box-shadow:0 18px 40px rgba(0,0,0,.35);transition:transform .35s,box-shadow .35s,border-color .35s;background:#0a1430;text-align:left;padding:0;font:inherit;color:#fff}
+.cat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.cat:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(8,12,30,.55) 70%,rgba(8,12,30,.92) 100%)}
+.cat .ct{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:18px 18px 20px}
+.cat h3{font-size:clamp(19px,2vw,25px);color:#fff;margin-bottom:5px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.cat p{font-size:13.5px;line-height:1.4;color:#e6dccb;margin-bottom:12px}
+.cat .go{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:650;color:#2b1d07;background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:30px;padding:7px 14px}
+.cat:hover{transform:translateY(-6px);box-shadow:0 26px 50px rgba(0,0,0,.5);border-color:rgba(226,184,100,.7)}
+.cat:hover img{transform:scale(1.05)}
+.cathead{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.cathead h3{color:#fff;font-size:clamp(22px,3vw,32px)}
+.back{background:rgba(255,255,255,.08);color:var(--gold2);border:1px solid rgba(226,184,100,.4);border-radius:30px;padding:8px 16px;font:600 14px/1 inherit;cursor:pointer}
+.back:hover{background:rgba(226,184,100,.15)}
+.gtabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.gtabs:empty{display:none}
+.gtabs button{background:rgba(255,255,255,.06);color:#e6dccb;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:9px 18px;font:600 14px/1 inherit;cursor:pointer}
+.gtabs button.on{background:var(--gold2);color:#2b1d07;border-color:var(--gold2)}
+.catv{animation:fadeup .4s ease}
+.cats[hidden],.catv[hidden]{display:none!important}
+.cat .go{white-space:nowrap}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pick h4{grid-column:1/-1;margin:10px 0 0;font-size:15px;color:var(--ink);font-family:"Lora",Georgia,serif}
+.pick h4:first-child{margin-top:0}
+@media(max-width:860px){.cats{grid-template-columns:1fr 1fr;gap:12px}.cat{border-radius:18px}.cat .ct{padding:12px 12px 14px}.cat p{font-size:11.5px;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.cat .go{font-size:11px;padding:6px 10px}.cat h3{font-size:17px}}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
 .card{background:var(--ink2);border-radius:22px;overflow:hidden;cursor:pointer;transition:.3s;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column}
 .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,.4);border-color:rgba(226,184,100,.4)}
@@ -229,10 +254,15 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
 
 <section class="dark" id="heroes"><div class="wrap">
  <div class="sh rv"><h2 data-i="heroes_t"></h2><p data-i="heroes_p"></p></div>
- <div class="cards" id="cards"></div>
+ <div class="cats" id="cats"></div>
+ <div class="catv" id="catv" hidden>
+  <div class="cathead"><button type="button" class="back" id="catBack">← <span data-i="cat_back"></span></button><h3 id="catTitle"></h3></div>
+  <div class="gtabs" id="gtabs"></div>
+  <div class="cards" id="cards"></div>
+ </div>
 </div>
 <div class="strip">
- <img src="img/nicholas_full.jpg?v=2" alt=""><img src="img/santa_full.jpg" alt=""><img src="img/moroz_full.jpg" alt=""><img src="img/fairy_full.jpg" alt=""><img src="img/mouse_full.jpg" alt=""><img src="img/kings_full.jpg" alt=""><img src="img/christkind_full.jpg" alt=""><img src="img/befana_full.jpg" alt=""><img src="img/wizard_full.jpg" alt=""><img src="img/elves.jpg" alt=""><img src="img/leprechaun_full.jpg" alt="">
+ <img src="img/nicholas_full.jpg?v=2" alt=""><img src="img/santa_full.jpg" alt=""><img src="img/moroz_full.jpg" alt=""><img src="img/fairy_full.jpg" alt=""><img src="img/mouse_full.jpg" alt=""><img src="img/kings_full.jpg" alt=""><img src="img/christkind_full.jpg" alt=""><img src="img/befana_full.jpg" alt=""><img src="img/wizard_full.jpg" alt=""><img src="img/elves.jpg" alt=""><img src="img/leprechaun_full.jpg" alt=""><img src="img/pirate_full.jpg" alt=""><img src="img/godmother_full.jpg" alt=""><img src="img/dragon_full.jpg" alt=""><img src="img/unicorn_full.jpg" alt=""><img src="img/astronaut_full.jpg" alt=""><img src="img/mermaid_full.jpg" alt=""><img src="img/princess_full.jpg" alt=""><img src="img/cupid_full.jpg" alt=""><img src="img/keeper_full.jpg" alt="">
 </div>
 </section>
 
@@ -352,19 +382,39 @@ let CUR="EUR", PRICES=PRICE_TABLE.EUR;
 function money(v){return CUR=="UAH"?`${v} грн`:`€${v}`}
 
 const HEROES=[
- {id:"nicholas",img:"nicholas",occ:["nicholas"]},
- {id:"santa",img:"santa",occ:["christmas","newyear","birthday"]},
- {id:"moroz",img:"moroz",occ:["newyear","birthday"]},
- {id:"fairy",img:"fairy",occ:["tooth"]},
- {id:"mouse",img:"mouse",occ:["tooth"]},
- {id:"kings",img:"kings",occ:["kings"]},
- {id:"christkind",img:"christkind",occ:["christmas"]},
- {id:"befana",img:"befana",occ:["befana"]},
- {id:"wizard",img:"wizard",occ:["birthday"]},
- {id:"gnomes",img:"gnomes",occ:["birthday","newyear","christmas"]},
- {id:"bunny",img:"bunny",occ:["easter"]},
- {id:"leprechaun",img:"leprechaun",occ:["patrick"]}];
-const OCC=["newyear","christmas","nicholas","kings","befana","birthday","tooth","easter","patrick","other"];
+ {id:"nicholas",img:"nicholas",occ:["nicholas"],cats:["winter"]},
+ {id:"santa",img:"santa",occ:["christmas","newyear","birthday"],cats:["winter"]},
+ {id:"moroz",img:"moroz",occ:["newyear","birthday"],cats:["winter"]},
+ {id:"christkind",img:"christkind",occ:["christmas"],cats:["winter"]},
+ {id:"kings",img:"kings",occ:["kings"],cats:["winter"]},
+ {id:"befana",img:"befana",occ:["befana"],cats:["winter"]},
+ {id:"wizard",img:"wizard",occ:["birthday"],cats:["bday"],g:"boy"},
+ {id:"pirate",img:"pirate",occ:["birthday"],cats:["bday"],g:"boy"},
+ {id:"astronaut",img:"astronaut",occ:["birthday"],cats:["bday"],g:"boy"},
+ {id:"dragon",img:"dragon",occ:["birthday"],cats:["bday"],g:"boy"},
+ {id:"godmother",img:"godmother",occ:["birthday"],cats:["bday"],g:"girl"},
+ {id:"unicorn",img:"unicorn",occ:["birthday"],cats:["bday"],g:"girl"},
+ {id:"mermaid",img:"mermaid",occ:["birthday"],cats:["bday"],g:"girl"},
+ {id:"princess",img:"princess",occ:["birthday"],cats:["bday"],g:"girl"},
+ {id:"gnomes",img:"gnomes",occ:["birthday","newyear","christmas","other"],cats:["bday","wonders"]},
+ {id:"fairy",img:"fairy",occ:["tooth"],cats:["wonders"]},
+ {id:"mouse",img:"mouse",occ:["tooth"],cats:["wonders"]},
+ {id:"bunny",img:"bunny",occ:["easter"],cats:["wonders"]},
+ {id:"leprechaun",img:"leprechaun",occ:["patrick"],cats:["wonders"]},
+ {id:"cupid",img:"cupid",occ:["valentine"],cats:["adult"]},
+ {id:"keeper",img:"keeper",occ:["anniversary"],cats:["adult"]},
+ {id:"viking",img:"viking",occ:["birthday","other"],cats:["adult"]}];
+const CATS=["winter","bday","wonders","adult"];
+/* season-aware order of category cards */
+function catOrder(){
+ const d=new Date(),m=d.getMonth()+1,day=d.getDate();let first="bday";
+ if(m>=11||(m==1&&day<=6))first="winter";
+ else if(m==1||(m==2&&day<=14))first="adult";
+ else if(m==3||m==4)first="wonders";
+ return [first,...CATS.filter(c=>c!=first)];
+}
+let CAT=null,GT="all";
+const OCC=["newyear","christmas","nicholas","kings","befana","birthday","tooth","easter","patrick","valentine","anniversary","other"];
 const codes=LANGS.map(l=>l[0]);
 const OFF=["zh","ar","he"]; /* temporarily hidden: Europe first */
 const ORDER=["en","de","fr","es","nl","pl","cs","uk","ru"];
@@ -396,12 +446,27 @@ $("#langsel").onchange=e=>applyLang(e.target.value);
 /* state */
 const S={hero:"",occ:"",pk:"p2",step:0,photo:""};
 
+function heroCard(h){return `<div class="card rv in" data-h="${h.id}"><div class="im"><img src="img/${h.img}.jpg?v=2" alt="" loading="lazy"></div><div class="tx"><h3>${t("h_"+h.id)}</h3><p>${t("d_"+h.id)}</p><div class="tags">${h.occ.filter(o=>o!="other").map(o=>`<i>${t("occ_"+o)}</i>`).join("")}</div><span class="btn sm">${t("choose")}</span></div></div>`}
 function renderCards(){
- $("#cards").innerHTML=HEROES.map(h=>`<div class="card rv in" data-h="${h.id}"><div class="im"><img src="img/${h.img}.jpg?v=2" alt="" loading="lazy"></div><div class="tx"><h3>${t("h_"+h.id)}</h3><p>${t("d_"+h.id)}</p><div class="tags">${h.occ.map(o=>`<i>${t("occ_"+o)}</i>`).join("")}</div><span class="btn sm">${t("choose")}</span></div></div>`).join("");
+ $("#cats").innerHTML=catOrder().map(c=>{return `<button type="button" class="cat rv in" data-c="${c}"><img src="img/cat_${c}.jpg?v=1" alt="" loading="lazy"><span class="ct"><h3>${t("cat_"+c+"_t")}</h3><p>${t("cat_"+c+"_p")}</p><span class="go">${t("cat_open")} →</span></span></button>`}).join("");
+ document.querySelectorAll(".cat").forEach(b=>b.onclick=()=>openCat(b.dataset.c,true));
+ $("#cats").hidden=!!CAT;$("#catv").hidden=!CAT;
+ if(!CAT)return;
+ $("#catTitle").textContent=t("cat_"+CAT+"_t");
+ $("#gtabs").innerHTML=CAT=="bday"?["all","boy","girl"].map(g=>`<button type="button" class="${GT==g?"on":""}" data-g="${g}">${t("tab_"+g)}</button>`).join(""):"";
+ document.querySelectorAll("#gtabs button").forEach(b=>b.onclick=()=>{GT=b.dataset.g;renderCards()});
+ $("#cards").innerHTML=HEROES.filter(h=>h.cats.includes(CAT)&&(GT=="all"||!h.g||h.g==GT)).map(heroCard).join("");
  document.querySelectorAll(".card").forEach(c=>c.onclick=()=>{S.hero=c.dataset.h;S.occ=HEROES.find(h=>h.id==S.hero).occ[0];renderPick();renderOcc();go(1);$("#order").scrollIntoView()});
 }
+function openCat(c,push){
+ CAT=c;GT="all";renderCards();
+ if(push&&c){try{history.pushState({cat:c},"","#heroes")}catch(e){}}
+ const top=$("#heroes").getBoundingClientRect().top+scrollY-60;scrollTo({top,behavior:"smooth"});
+}
+$("#catBack").onclick=()=>{if(history.state&&history.state.cat)history.back();else openCat(null)};
+addEventListener("popstate",e=>{if(CAT&&!(e.state&&e.state.cat))openCat(null)});
 function renderPick(){
- $("#pickHero").innerHTML=HEROES.map(h=>`<input type="radio" name="hero" id="hr_${h.id}" value="${h.id}" ${S.hero==h.id?"checked":""}><label for="hr_${h.id}"><img src="img/${h.img}.jpg?v=2" alt=""><span>${t("h_"+h.id)}</span></label>`).join("");
+ const seen=new Set();$("#pickHero").innerHTML=catOrder().map(c=>{const hs=HEROES.filter(h=>h.cats.includes(c)&&!seen.has(h.id));hs.forEach(h=>seen.add(h.id));return `<h4>${t("cat_"+c+"_t")}</h4>`+hs.map(h=>`<input type="radio" name="hero" id="hr_${h.id}" value="${h.id}" ${S.hero==h.id?"checked":""}><label for="hr_${h.id}"><img src="img/${h.img}.jpg?v=2" alt="" loading="lazy"><span>${t("h_"+h.id)}</span></label>`).join("")}).join("");
  document.querySelectorAll("[name=hero]").forEach(r=>r.onchange=()=>{S.hero=r.value;S.occ=HEROES.find(h=>h.id==S.hero).occ[0];renderOcc();go(1)});
 }
 function renderOcc(){
@@ -510,8 +575,9 @@ function rs(){W=c.width=c.offsetWidth||innerWidth;H=c.height=c.offsetHeight||inn
 
 /* examples: video/{hero}_{lang}.mp4, fallback to English */
 let EX="nicholas";
+const EXV=["nicholas","santa"]; /* heroes that already have example videos */
 function renderEx(){
- $("#exTabs").innerHTML=HEROES.map(h=>`<button type="button" class="${h.id==EX?"on":""}" data-x="${h.id}">${t("h_"+h.id)}</button>`).join("");
+ $("#exTabs").innerHTML=HEROES.filter(h=>EXV.includes(h.id)).map(h=>`<button type="button" class="${h.id==EX?"on":""}" data-x="${h.id}">${t("h_"+h.id)}</button>`).join("");
  document.querySelectorAll("#exTabs button").forEach(b=>b.onclick=()=>{EX=b.dataset.x;renderEx();loadEx()});
 }
 function loadEx(){
