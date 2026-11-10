@@ -210,6 +210,7 @@ footer .logo{justify-content:center;margin-bottom:10px}
 .player{position:relative;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 24px 60px rgba(0,0,0,.45);aspect-ratio:16/9}
 .player video{width:100%;height:100%;display:block;object-fit:cover}
 .player .cc{position:absolute;top:12px;right:12px;z-index:2;display:none;align-items:center;gap:6px;background:rgba(14,22,48,.72);color:#fff;border:1px solid rgba(226,184,100,.55);border-radius:20px;padding:6px 12px;font:600 13px/1 inherit;cursor:pointer;backdrop-filter:blur(4px)}
+.player .cast{position:absolute;top:12px;left:12px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(14,22,48,.72);color:#fff;border:1px solid rgba(226,184,100,.55);border-radius:20px;padding:6px 12px;font:600 13px/1 inherit;cursor:pointer}
 .player .cc b{border:1.5px solid currentColor;border-radius:4px;padding:1px 3px;font-size:11px}
 .player .cc.on{background:var(--gold2,#e2b864);color:#0e1630}
 .player video::cue{background:rgba(0,0,0,.62);color:#fff;font-size:clamp(14px,2.3vw,22px);line-height:1.35}
@@ -283,7 +284,7 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
 <section class="dark" id="examples" style="padding-top:20px"><div class="wrap">
  <div class="sh rv"><h2 data-i="ex_t"></h2><p data-i="ex_p"></p></div>
  <div class="ex"><div class="extabs" id="exTabs"></div>
-  <div class="player"><video id="exv" controls playsinline preload="metadata"></video><button type="button" class="cc" id="ccBtn" aria-pressed="false"><b>CC</b><span data-i="cc"></span></button><div class="soon" id="exSoon"><span data-i="ex_soon"></span></div></div></div>
+  <div class="player"><video id="exv" controls playsinline preload="metadata"></video><button type="button" class="cast" id="tvBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span data-i="tv"></span></button><button type="button" class="cc" id="ccBtn" aria-pressed="false"><b>CC</b><span data-i="cc"></span></button><div class="soon" id="exSoon"><span data-i="ex_soon"></span></div></div></div>
 </div></section>
 
 <section id="inside"><div class="wrap">
@@ -620,6 +621,12 @@ function setSubs(v){
 }
 const EXN={it:"Andrea",uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejka",nl:"Andries",cs:"Ondřejka"};
 const EXNOM={it:"Andrea",uk:"Андрійка",ru:"Андрюши",en:"Andy",es:"Andrés",de:"Andreas",fr:"André",pl:"Andrzejek",nl:"Andries",cs:"Ondřejek"};
+
+/* cast example video to TV: AirPlay (Safari) or Chromecast/Remote Playback (Chrome) */
+(function(){var b=document.getElementById("tvBtn");if(!b)return;b.onclick=function(){var v=document.getElementById("exv");
+ try{if(v.webkitShowPlaybackTargetPicker){v.webkitShowPlaybackTargetPicker();return}}catch(e){}
+ try{if(v.remote&&v.remote.prompt){v.remote.prompt().catch(function(){alert(t("tv_help"))});return}}catch(e){}
+ alert(t("tv_help"))}})();
 /* init */
 let saved="";try{saved=localStorage.getItem("wg_lang")||""}catch(e){}
 /* language by country (time zone of the device), then browser language */
