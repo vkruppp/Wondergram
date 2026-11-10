@@ -183,6 +183,8 @@ textarea{min-height:90px;resize:vertical}
 .pk label b{display:block;color:var(--ink);font-size:15px}
 .pk label em{font-style:normal;font-family:Georgia,serif;font-size:24px;color:var(--ink)}
 .pk input:checked+label{border-color:var(--gold);box-shadow:0 0 0 3px rgba(226,184,100,.35)}
+.sibbox{border:1.5px dashed #c9a35a;border-radius:14px;padding:6px 14px 12px;margin:12px 0;background:rgba(201,163,90,.07)}
+.sib{border-top:1px solid rgba(201,163,90,.35);padding-top:10px;margin-top:6px}.sibh{display:block;font-size:13px;margin-bottom:4px;color:#8a6a2c}.sibmore{display:inline-block;margin-top:10px;font-weight:600;color:#8a6a2c}
 .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer;margin:10px 0}
 .ck input{margin-top:4px;width:18px;height:18px;flex:none;accent-color:var(--ink)}
 .nav2{display:flex;justify-content:space-between;align-items:center;margin-top:26px;gap:12px;flex-wrap:wrap}
@@ -347,6 +349,18 @@ html[lang=ar] body *,html[lang=he] body *{letter-spacing:0!important}
    <div class="fl"><div class="pk" id="pickPk"></div></div>
    <label class="ck"><input type="checkbox" id="exp"><span><span data-i="express"></span> (+<span data-price="exp"></span>)</span></label>
    <label class="ck"><input type="checkbox" id="subs"><span data-i="f_subs"></span></label>
+   <div class="sibbox" id="sibBox" style="display:none">
+    <label class="ck"><input type="checkbox" id="sibOn"><span><b data-i="sib_t"></b> (+<span data-price="sib"></span> <span data-i="sib_each"></span>)<br><small data-i="sib_d"></small></span></label>
+    <div id="sibList" style="display:none"><div class="sib" id="sib1"><b class="sibh"><span data-i="sib_child"></span> 2</b>
+     <div class="row"><label class="fl"><span data-i="sib_n"></span><input type="text" id="sibn1" maxlength="40"></label><label class="fl"><span data-i="sib_age"></span><input type="number" id="siba1" min="0" max="99"></label></div>
+     <label class="fl"><span data-i="sib_about"></span><input type="text" id="sibt1" data-ph="sib_about_ph" maxlength="200"></label>
+     <div class="slots" style="grid-template-columns:1fr"><label class="slot" id="sl_sib1" style="flex-direction:row;gap:12px;text-align:left"><input type="file" accept="image/*" data-slot="sib1"><div class="pv" style="width:70px;flex:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5" fill="#c9a35a"/><path d="M4 23c.8-5 4-7.5 8-7.5s7.2 2.5 8 7.5z" fill="#c9a35a"/></svg></div><span><b data-i="sib_ph"></b><br><i data-i="ph_req"></i></span></label></div></div><div class="sib" id="sib2" style="display:none"><b class="sibh"><span data-i="sib_child"></span> 3</b>
+     <div class="row"><label class="fl"><span data-i="sib_n"></span><input type="text" id="sibn2" maxlength="40"></label><label class="fl"><span data-i="sib_age"></span><input type="number" id="siba2" min="0" max="99"></label></div>
+     <label class="fl"><span data-i="sib_about"></span><input type="text" id="sibt2" data-ph="sib_about_ph" maxlength="200"></label>
+     <div class="slots" style="grid-template-columns:1fr"><label class="slot" id="sl_sib2" style="flex-direction:row;gap:12px;text-align:left"><input type="file" accept="image/*" data-slot="sib2"><div class="pv" style="width:70px;flex:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5" fill="#c9a35a"/><path d="M4 23c.8-5 4-7.5 8-7.5s7.2 2.5 8 7.5z" fill="#c9a35a"/></svg></div><span><b data-i="sib_ph"></b><br><i data-i="ph_req"></i></span></label></div></div>
+     <a href="#" id="sibMore" class="sibmore" data-i="sib_add"></a></div>
+   </div>
+   <p class="note" id="sibNo" style="display:none" data-i="sib_no"></p>
    <div class="row">
     <label class="fl"><span data-i="f_lang"></span><select id="vlang"></select></label>
     <label class="fl"><span data-i="f_email"></span><input type="email" id="email" placeholder="name@mail.com"></label>
@@ -389,9 +403,10 @@ const TG_CHAT  = "7824471826";            // chat id from @userinfobot
 const PAY_URL = "";            // payment page link (WayForPay / Stripe Payment Link), order number is appended
 const BANK = {name:"—", iban:"—", bank:"—"};
 const PRICE_TABLE = {
- UAH:{p1:499, p2:799, p3:999, exp:199},
- EUR:{p1:10,  p2:15,  p3:20,  exp:4}
+ UAH:{p1:499, p2:799, p3:999, exp:199, sib:200},
+ EUR:{p1:10,  p2:15,  p3:20,  exp:4, sib:4}
 };
+const SIB_HEROES=["nicholas","santa","godmother","wizard"]; // heroes where siblings option works (package p3)
 const CUR_BY_LANG = {uk:"UAH"};      // all other languages: EUR
 let CUR="EUR", PRICES=PRICE_TABLE.EUR;
 function money(v){return CUR=="UAH"?`${v} грн`:`€${v}`}
@@ -495,8 +510,12 @@ function renderPk(){
 }
 document.querySelectorAll("[data-pk]").forEach(a=>a.onclick=()=>{S.pk=a.dataset.pk;renderPk();updSum()});
 $("#exp").onchange=updSum;
-function total(){return PRICES[S.pk]+($("#exp").checked?PRICES.exp:0)}
-function updSum(){$("#sum").innerHTML=`<small>${t("total")}</small>${money(total())}`}
+function sibN(){if(!(S.pk=="p3"&&SIB_HEROES.includes(S.hero)&&$("#sibOn").checked))return 0;return $("#sib2").style.display=="none"?1:2}
+function updSib(){const ok=SIB_HEROES.includes(S.hero),p3=S.pk=="p3";$("#sibBox").style.display=p3&&ok?"":"none";$("#sibNo").style.display=p3&&!ok&&S.hero?"":"none";$("#sibList").style.display=$("#sibOn").checked?"":"none";$("#sibMore").style.display=$("#sib2").style.display=="none"?"":"none"}
+$("#sibOn").onchange=function(){updSib();updSum()};
+$("#sibMore").onclick=function(e){e.preventDefault();$("#sib2").style.display="";updSib();updSum()};
+function total(){return PRICES[S.pk]+($("#exp").checked?PRICES.exp:0)+sibN()*PRICES.sib}
+function updSum(){updSib();$("#sum").innerHTML=`<small>${t("total")}</small>${money(total())}`}
 
 /* photo */
 S.files={};
@@ -520,7 +539,7 @@ function valid(n){
  if(n==0&&!S.hero)bad.push("#pickHero");
  if(n==1&&!S.occ)bad.push("#pickOcc");
  if(n==2){if(!$("#cname").value.trim())bad.push("#cname");if(!$("#cage").value)bad.push("#cage");if(!$("#cach").value.trim())bad.push("#cach");if(!S.files.face)bad.push("#sl_face")}
- if(n==3){if(!/^\S+@\S+\.\S+$/.test($("#email").value))bad.push("#email");if(!$("#consent").checked)bad.push("#consent")}
+ if(n==3){for(let i=1;i<=sibN();i++){if(!$("#sibn"+i).value.trim())bad.push("#sibn"+i);if(!S.files["sib"+i])bad.push("#sl_sib"+i)}if(!/^\S+@\S+\.\S+$/.test($("#email").value))bad.push("#email");if(!$("#consent").checked)bad.push("#consent")}
  document.querySelectorAll(".bad").forEach(e=>e.classList.remove("bad"));
  bad.forEach(s=>$(s).classList.add("bad"));
  $("#msg").textContent=bad.length?t("err"):"";
@@ -549,18 +568,18 @@ function sendTelegram(o){
 <b>Где подарок:</b> ${esc(o.gift)||"—"}
 
 <b>Пакет:</b> ${esc(pk)}${o.express?" + ⚡ экспресс 24 ч":""}
-<b>Субтитры:</b> ${o.subs?"✅ нужны":"—"}
+<b>Субтитры:</b> ${o.subs?"✅ нужны":"—"}${o.siblings&&o.siblings.length?"\n<b>Братья/сёстры:</b> "+o.siblings.map(s=>esc(s.name)+(s.age?", "+esc(s.age)+" лет":"")+(s.about?" — "+esc(s.about):"")).join("; "):""}
 <b>Сумма:</b> ${esc(money(o.total))}
 <b>Язык видео:</b> ${esc(langName)}
 <b>Оплата:</b> ${o.pay=="card"?"карта / Apple Pay / Google Pay":"по реквизитам"}
 <b>Письмо ребёнка:</b> ${(S.files||{}).letter?"✅ загружено":"—"}
 <b>Email:</b> ${esc(o.email)}
 <b>Язык сайта:</b> ${esc(o.siteLang)} · ${new Date(o.created).toLocaleString("ru-RU")}`;
- const lab={face:"лицо крупно",full:"в полный рост",extra:"дополнительное",letter:"✉️ ПИСЬМО РЕБЁНКА"};
+ const lab={face:"лицо крупно",full:"в полный рост",extra:"дополнительное",letter:"✉️ ПИСЬМО РЕБЁНКА",sib1:"👧 брат/сестра 1",sib2:"👦 брат/сестра 2"};
  return fetch(api+"/sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:TG_CHAT,text:txt,parse_mode:"HTML"})}).then(function(r){
   if(!r.ok) throw new Error("tg "+r.status);
   var p=Promise.resolve();
-  ["face","full","extra","letter"].forEach(function(k){const f=(S.files||{})[k];if(!f)return;
+  ["face","full","extra","letter","sib1","sib2"].forEach(function(k){if((k=="sib1"&&sibN()<1)||(k=="sib2"&&sibN()<2))return;const f=(S.files||{})[k];if(!f)return;
    p=p.then(function(){const fd=new FormData();fd.append("chat_id",TG_CHAT);fd.append("document",f,`${o.id}_${k}_`+(f.name||"photo.jpg"));fd.append("caption",`📷 ${o.id} · ${o.name} · ${lab[k]}`);return fetch(api+"/sendDocument",{method:"POST",body:fd})});
   });
   return p.then(function(){return true});
@@ -569,7 +588,7 @@ function sendTelegram(o){
 function finish(){
  const id="WG-"+Date.now().toString(36).toUpperCase().slice(-6);
  const pay=document.querySelector("[name=pay]:checked").value;
- const o={id,hero:S.hero,occasion:S.occ,name:$("#cname").value.trim(),age:$("#cage").value,gender:$("#cgen").value,achievements:$("#cach").value.trim(),hobby:$("#chobby").value.trim(),wish:$("#cwish").value.trim(),gift:$("#cgift").value.trim(),videoLang:$("#vlang").value,package:S.pk,express:$("#exp").checked,subs:$("#subs").checked,currency:CUR,email:$("#email").value,pay,total:total(),siteLang:L,created:new Date().toISOString()};
+ const o={id,hero:S.hero,occasion:S.occ,name:$("#cname").value.trim(),age:$("#cage").value,gender:$("#cgen").value,achievements:$("#cach").value.trim(),hobby:$("#chobby").value.trim(),wish:$("#cwish").value.trim(),gift:$("#cgift").value.trim(),videoLang:$("#vlang").value,package:S.pk,express:$("#exp").checked,subs:$("#subs").checked,siblings:[1,2].slice(0,sibN()).map(i=>({name:$("#sibn"+i).value.trim(),age:$("#siba"+i).value,about:$("#sibt"+i).value.trim()})),currency:CUR,email:$("#email").value,pay,total:total(),siteLang:L,created:new Date().toISOString()};
  try{localStorage.setItem("wg_order_"+id,JSON.stringify(o))}catch(e){}
  const nx=$("#nx");nx.disabled=true;const nxt=nx.textContent;nx.textContent="…";
  sendTelegram(o).then(function(){
